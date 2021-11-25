@@ -88,7 +88,13 @@ namespace Pijaca
         /// </summary>
         public void ZatvoriSveNeaktivneŠtandove()
         {
-            throw new NotImplementedException();
+            štandovi = štandovi.Where(š =>
+            {
+                if (!š.Prodavač.Aktivnost && š.Prodavač.UkupniPromet > 100 && DateTime.Now < š.KrajZakupa)
+                    return false;
+
+                return (!š.Prodavač.Aktivnost || š.KrajZakupa < DateTime.Now);
+            }).ToList();
         }
 
         public void IzvršavanjeKupovina(Štand š, List<Kupovina> kupovine, string sigurnosniKod)
