@@ -72,6 +72,7 @@ namespace Pijaca
         /// potrebno je baciti izuzetak o neispravno unesenim podacima.
         /// U suprotnom je potrebno povećati ukupni promet za proslijeđenu sumu prometa.
         /// </summary>
+        /// Uradila --> Dinija Seferović
         public void RegistrujPromet(string šifra, double promet, DateTime početak, DateTime kraj)
         {
             if (šifra != sigurnosniKod) throw new InvalidOperationException("Poslana šifra se ne poklapa sa kodom!");
