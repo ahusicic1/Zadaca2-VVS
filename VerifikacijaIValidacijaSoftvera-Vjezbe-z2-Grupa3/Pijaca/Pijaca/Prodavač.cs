@@ -74,7 +74,10 @@ namespace Pijaca
         /// </summary>
         public void RegistrujPromet(string šifra, double promet, DateTime početak, DateTime kraj)
         {
-            throw new NotImplementedException();
+            if (šifra != sigurnosniKod) throw new InvalidOperationException("Poslana šifra se ne poklapa sa kodom!");
+            else if (ukupniPromet == 0 && (početak.AddMonths(1) > kraj)) Aktivnost = false;
+            else if (promet > 1000 && (početak - kraj).TotalDays < 2) throw new InvalidOperationException("Neispravno uneseni podaci!");
+            else ukupniPromet += promet; 
         }
 
         #endregion
