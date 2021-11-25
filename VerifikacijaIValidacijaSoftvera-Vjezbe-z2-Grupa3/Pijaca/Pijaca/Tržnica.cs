@@ -86,6 +86,8 @@ namespace Pijaca
         /// U slučaju da ne postoji nijedan registrovan prodavač i/ili štand, potrebno je samo
         /// završiti rad metode.
         /// </summary>
+        
+        /// Uradio --> Mirza Kadrić
         public void ZatvoriSveNeaktivneŠtandove()
         {
             štandovi = štandovi.Where(š =>
