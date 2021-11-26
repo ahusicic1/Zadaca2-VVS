@@ -92,10 +92,10 @@ namespace Pijaca
         {
             štandovi = štandovi.Where(š =>
             {
-                if (!š.Prodavač.Aktivnost && š.Prodavač.UkupniPromet > 100 && DateTime.Now < š.KrajZakupa)
-                    return false;
+                if (!š.Prodavač.Aktivnost && š.Prodavač.UkupniPromet > 100000 && DateTime.Now < š.KrajZakupa)
+                    return true;
 
-                return (!š.Prodavač.Aktivnost || š.KrajZakupa < DateTime.Now);
+                return (š.Prodavač.Aktivnost && š.KrajZakupa > DateTime.Now);
             }).ToList();
         }
 
