@@ -159,10 +159,24 @@ namespace Pijaca
             int šifraDrzave = 111;
             if (domaći) šifraDrzave = 387;
 
-            int kontrolnaCifra = 45 % 10;
-            int šifra = šifraDrzave - brojač - kontrolnaCifra;
+            int n = šifraDrzave, kontrolnaCifra = 0;
+            while (n != 0)
+            {
+                kontrolnaCifra += n % 10;
+                n /= 10;
+            }
+            n = brojač;
+            while (n != 0)
+            {
+                kontrolnaCifra += n % 10;
+                n /= 10;
+            }
+
+            kontrolnaCifra = kontrolnaCifra % 10;
+
+            string šifra = šifraDrzave.ToString() + " - " + brojač.ToString() + " - " + kontrolnaCifra.ToString();
             brojač++;
-            return šifra.ToString();
+            return šifra;
         }
 
         public void NaručiKoličinu(int količina, DateTime očekivaniDatumPristizanja)
