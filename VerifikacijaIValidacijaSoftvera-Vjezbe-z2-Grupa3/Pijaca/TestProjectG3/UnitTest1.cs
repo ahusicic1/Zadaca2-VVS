@@ -70,7 +70,7 @@ namespace TestProjectG3
             Assert.IsFalse(prodavac1.Aktivnost);
             Assert.IsTrue(prodavac2.Aktivnost);
             Assert.AreEqual(prodavac2.UkupniPromet, 1000);
-
+             
         }
     }
 }
