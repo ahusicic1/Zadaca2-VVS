@@ -156,7 +156,13 @@ namespace Pijaca
         /// <returns></returns>
         public string GenerišiŠifru(bool domaći)
         {
-            throw new NotImplementedException();
+            int šifraDrzave = 111;
+            if (domaći) šifraDrzave = 387;
+
+            int kontrolnaCifra = 45 % 10;
+            int šifra = šifraDrzave - brojač - kontrolnaCifra;
+            brojač++;
+            return šifra.ToString();
         }
 
         public void NaručiKoličinu(int količina, DateTime očekivaniDatumPristizanja)
