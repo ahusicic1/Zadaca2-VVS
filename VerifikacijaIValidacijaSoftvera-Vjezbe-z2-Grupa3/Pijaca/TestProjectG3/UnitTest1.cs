@@ -46,7 +46,7 @@ namespace TestProjectG3
         [ExpectedException(typeof(InvalidOperationException))]
         public void TestRegistrujPrometIzuzetak1()
         {
-            Prodavač p = new Prodavač("prodavac", "000", DateTime.Now, 0);
+            Prodavač p = new Prodavač("prodavac", "000", DateTime.Parse("01/07/2021"), 0);
             p.RegistrujPromet("123", 0, DateTime.Now, DateTime.Now);
         }
 
@@ -54,8 +54,11 @@ namespace TestProjectG3
         [ExpectedException(typeof(InvalidOperationException))]
         public void TestRegistrujPrometIzuzetak2()
         {
-            Prodavač p = new Prodavač("prodavac", "000", DateTime.Now, 0);
-            p.RegistrujPromet("123", 3000, DateTime.Now.AddDays(-1), DateTime.Now);
+            Prodavač p = new Prodavač("prodavac", "000", DateTime.Parse("01/07/2021"), 0);
+            p.RegistrujPromet("000", 900, DateTime.Now.AddDays(-5), DateTime.Now);
+            p.RegistrujPromet("000", 900, DateTime.Now.AddDays(-1), DateTime.Now);
+            p.RegistrujPromet("000", 3000, DateTime.Now.AddDays(-5), DateTime.Now);
+            p.RegistrujPromet("000", 3000, DateTime.Now.AddDays(-1), DateTime.Now);
         }
 
         [TestMethod]
