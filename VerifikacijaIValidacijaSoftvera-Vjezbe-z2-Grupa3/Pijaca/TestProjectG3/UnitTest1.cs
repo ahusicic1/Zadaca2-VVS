@@ -10,15 +10,14 @@ namespace TestProjectG3
     public class UnitTest1
     {
         [TestMethod]
-        public void Test1GenerisanjeSifreDomaci()
+        public void Test1GenerisanjeSifreDomaciIStrani()
         {
-          
-        }
+            //Mirza Kadrić
+            Proizvod p = new Proizvod(Namirnica.Povrće, "Luk", 20, DateTime.Now, 1.5, true);
+            Assert.AreEqual(p.ŠifraProizvoda, "387 - 1000 - 9");
 
-        [TestMethod]
-        public void TestGenerisanjeSifreStrani()
-        {
-
+            p = new Proizvod(Namirnica.Voće, "Jagoda", 30, DateTime.Now, 2, false);
+            Assert.AreEqual(p.ŠifraProizvoda, "111 - 1001 - 5");
         }
 
         [TestMethod]
