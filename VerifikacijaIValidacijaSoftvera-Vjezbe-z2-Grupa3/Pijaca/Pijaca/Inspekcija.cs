@@ -18,4 +18,13 @@ namespace Pijaca
             throw new NotImplementedException();
         }
     }
+
+    public class SpyInspekcija: IInspekcija
+    {
+        public bool ŠtandIspravan(Štand š)
+        {
+            return (š.Prodavač.Ime.Length < 6);
+        }
+
+    }
 }
