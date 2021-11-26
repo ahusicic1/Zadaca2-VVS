@@ -76,7 +76,7 @@ namespace TestProjectG3
         [TestMethod]
         public void TestRegistrujPrometAktivnost()
         {
-            Prodavač prodavac1= new Prodavač("prodavac", "000", DateTime.Parse("01/07/2021"), 0);
+            Prodavač prodavac1 = new Prodavač("prodavac", "000", DateTime.Parse("01/07/2021"), 0);
             Prodavač prodavac2 = new Prodavač("prodavac", "001", DateTime.Parse("01/07/2021"), 0);
             Assert.IsTrue(prodavac1.Aktivnost);
 
