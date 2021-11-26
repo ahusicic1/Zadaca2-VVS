@@ -38,6 +38,5 @@ namespace TestProjectG3
             CollectionAssert.AreEquivalent(trznica.Štandovi, new List<Štand>());
 
         }
-
     }
 }

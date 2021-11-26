@@ -125,7 +125,53 @@ namespace Pijaca
 
         public void DodajTipskeNamirnice(Namirnica vrsta, bool svi = false)
         {
-            throw new NotImplementedException();
+            switch(vrsta)
+            {
+                case Namirnica.Meso:
+                    if (svi)
+                    {
+                        štandovi.ForEach(š =>
+                        {
+                            if (š.Proizvodi.Find(p => p.VrstaNamirnice != Namirnica.Meso) == null)
+                                throw new InvalidOperationException();
+                            š.Proizvodi.RemoveAll(p => p.VrstaNamirnice != Namirnica.Voće);
+                        }
+                        );
+                    }
+                    štandovi.ForEach(š => 
+                    {
+                        if (!š.Proizvodi.Exists(p => p.Ime == "Salama"))
+                            š.Proizvodi.Add(new Proizvod(Namirnica.Meso, "Salama", 10, DateTime.Now.AddDays(-7), 2.5, true));
+                        if (!š.Proizvodi.Exists(p => p.Ime == "Suho meso"))
+                            š.Proizvodi.Add(new Proizvod(Namirnica.Meso, "Suho meso", 10, DateTime.Now.AddDays(-7), 2.5, true));
+                        if (!š.Proizvodi.Exists(p => p.Ime == "Pileća prsa"))
+                            š.Proizvodi.Add(new Proizvod(Namirnica.Meso, "Pileća prsa", 10, DateTime.Now.AddDays(-7), 2.5, true));
+                    });
+                    break;
+            case Namirnica.Voće:
+                if (svi)
+                {
+                    štandovi.ForEach(š =>
+                    {
+                        if (š.Proizvodi.Find(p => p.VrstaNamirnice != Namirnica.Voće) == null)
+                            throw new InvalidOperationException();
+                        š.Proizvodi.RemoveAll(p => p.VrstaNamirnice != Namirnica.Voće);
+                    }
+                    );
+                }
+                štandovi.ForEach(š =>
+                {
+                    if (!š.Proizvodi.Exists(p => p.Ime == "Šljiva"))
+                        š.Proizvodi.Add(new Proizvod(Namirnica.Meso, "Šljiva", 10, DateTime.Now.AddDays(-7), 2.5, true));
+                    if (!š.Proizvodi.Exists(p => p.Ime == "Narandža"))
+                        š.Proizvodi.Add(new Proizvod(Namirnica.Meso, "Narandža", 10, DateTime.Now.AddDays(-7), 2.5, true));
+                    if (!š.Proizvodi.Exists(p => p.Ime == "Jabuka"))
+                        š.Proizvodi.Add(new Proizvod(Namirnica.Meso, "Jabuka", 10, DateTime.Now.AddDays(-7), 2.5, true));
+                });
+                break;
+            default:
+                throw new InvalidOperationException();
+            }
         }
 
         public void NaručiProizvode(Štand štand, List<Proizvod> proizvodi, List<int> količine, List<DateTime> rokovi, bool svi = false)
