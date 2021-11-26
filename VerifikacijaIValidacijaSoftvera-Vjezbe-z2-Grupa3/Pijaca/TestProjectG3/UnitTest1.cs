@@ -72,6 +72,5 @@ namespace TestProjectG3
             Assert.AreEqual(prodavac2.UkupniPromet, 1000);
 
         }
-
     }
 }
