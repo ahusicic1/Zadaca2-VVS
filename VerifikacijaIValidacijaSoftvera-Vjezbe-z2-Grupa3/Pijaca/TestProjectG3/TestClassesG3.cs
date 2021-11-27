@@ -15,7 +15,6 @@ namespace TestProjectG3
     [TestClass]
     public class TestClassTrznica
     {
-        //Adna Husičić
 
         [TestMethod]
         public void TestZatvoriSveNeaktivneStandove()
@@ -65,7 +64,6 @@ namespace TestProjectG3
     [TestClass]
     public class TestClassProdavac
     {
-        //Dinija Seferovic
         
         static IEnumerable<object[]> ProdavaciNeispravniCSV
         {
@@ -176,7 +174,20 @@ namespace TestProjectG3
     [TestClass]
     public class TestClassStand
     {
+        [TestMethod]
+        public void TestRegistrujKupovinu()
+        {
+            Prodavač prodavac = new Prodavač("Prvi", "1234", new DateTime(2021, 1, 31), 80);
+            Proizvod proizvod = new Proizvod(Namirnica.Povrće, "kupus", 3, new DateTime(2021, 3, 31), 2, false);
+            Štand stand = new Štand(prodavac, new DateTime(2022, 1, 20), null);
+            Kupovina kupovina = new Kupovina(proizvod, 2);
+            List<Kupovina> trazenaLista = new List<Kupovina>() { kupovina };
+            stand.RegistrujKupovinu(kupovina);
+            Assert.AreEqual(trazenaLista[0].Proizvod.ŠifraProizvoda, stand.Kupovine[0].Proizvod.ŠifraProizvoda);
+            Assert.AreEqual(trazenaLista.Count, stand.Kupovine.Count);
+            
 
+        }
     }
 
     #endregion
@@ -196,6 +207,17 @@ namespace TestProjectG3
     [TestClass]
     public class TestClassKupovina
     {
+        [TestMethod]
+        public void TestKupovinaKonstruktor()
+        {
+            Proizvod proizvod = new Proizvod(Namirnica.Voće, "jabuka", 3, new DateTime(2021, 3, 31), 2, false);
+            Kupovina kupovina = new Kupovina(proizvod, 2);
+            Assert.AreEqual(4, kupovina.UkupnaCijena);
+            Assert.AreEqual(0, kupovina.Popust);
+            Assert.AreEqual(2, kupovina.Količina);
+            Assert.AreEqual(DateTime.Now.Date, kupovina.DatumKupovine.Date);
+            StringAssert.Contains("jabuka", kupovina.Proizvod.Ime);
+        }
 
     }
 
