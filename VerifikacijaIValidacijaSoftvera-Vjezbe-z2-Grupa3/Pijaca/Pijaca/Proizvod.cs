@@ -154,6 +154,7 @@ namespace Pijaca
         /// </summary>
         /// <param name="domaći"></param>
         /// <returns></returns>
+        /// Uradila -> Adna Husičić
         public string GenerišiŠifru(bool domaći)
         {
             int šifraDrzave = 111;
