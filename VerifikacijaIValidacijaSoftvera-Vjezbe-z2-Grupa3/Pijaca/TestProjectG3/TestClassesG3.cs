@@ -1,13 +1,21 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using CsvHelper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Pijaca;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Xml;
 
 namespace TestProjectG3
 {
+    #region Testovi za klasu Trznica
+
     [TestClass]
     public class TestClassTrznica
     {
+        //Adna Husičić
 
         [TestMethod]
         public void TestZatvoriSveNeaktivneStandove()
@@ -50,14 +58,84 @@ namespace TestProjectG3
 
     }
 
+    #endregion
+
+    #region Testovi za klasu Prodavac
+
     [TestClass]
     public class TestClassProdavac
     {
-        //Adna Husičić
+        //Dinija Seferovic
+        
+        static IEnumerable<object[]> ProdavaciNeispravniCSV
+        {
+            get
+            {
+                return UcitajProdavaceCSV();
+            }
+        }
+
+        static IEnumerable<object[]> ProdavaciIspravniXML
+        {
+            get
+            {
+                return UcitajProdavaceXML();
+            }
+        }
+
+        [TestMethod]
+        [DynamicData("ProdavaciNeispravniCSV")]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestKonstruktoraProdavacaCSV(string ime, DateTime otvaranje, double promet)
+        {
+            Prodavač p = new Prodavač(ime, "100", otvaranje, promet);
+        }
+
+        [TestMethod]
+        [DynamicData("ProdavaciIspravniXML")]
+        public void TestKonstruktoraProdavacaXML(string ime, DateTime otvaranje, double promet)
+        {
+            Prodavač p = new Prodavač(ime, "110", otvaranje, promet);
+            Assert.AreEqual(DateTime.Parse("01/09/2021"), p.OtvaranjeŠtanda);
+        }
+
+
+        public static IEnumerable<object[]> UcitajProdavaceCSV()
+        {
+            using (var reader = new StreamReader("prodavacineispravni.csv"))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            {
+                var rows = csv.GetRecords<dynamic>();
+                foreach (var row in rows)
+                {
+                    var values = ((IDictionary<String, Object>)row).Values;
+                    var elements = values.Select(elem => elem.ToString()).ToList();
+                    yield return new object[] { elements[0], DateTime.Parse(elements[1]), Convert.ToDouble(elements[2]) };
+                }
+            }
+        }
+
+        public static IEnumerable<object[]> UcitajProdavaceXML()
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.Load("prodavaciispravni.xml");
+            foreach (XmlNode node in doc.DocumentElement.ChildNodes)
+            {
+                List<string> elements = new List<string>();
+                foreach (XmlNode innerNode in node)
+                {
+                    elements.Add(innerNode.InnerText);
+                }
+                yield return new object[] { elements[0], DateTime.Parse(elements[1]), Convert.ToDouble(elements[2]) };
+            }
+        }
+
+
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
         public void TestRegistrujPrometIzuzetak1()
         {
+            //Adna Husičić
             Prodavač p = new Prodavač("prodavac", "000", DateTime.Parse("01/07/2021"), 0);
             p.RegistrujPromet("123", 0, DateTime.Now, DateTime.Now);
         }
@@ -66,6 +144,7 @@ namespace TestProjectG3
         [ExpectedException(typeof(InvalidOperationException))]
         public void TestRegistrujPrometIzuzetak2()
         {
+            //Adna Husičić
             Prodavač p = new Prodavač("prodavac", "000", DateTime.Parse("01/07/2021"), 0);
             p.RegistrujPromet("000", 900, DateTime.Now.AddDays(-5), DateTime.Now);
             p.RegistrujPromet("000", 900, DateTime.Now.AddDays(-1), DateTime.Now);
@@ -76,6 +155,7 @@ namespace TestProjectG3
         [TestMethod]
         public void TestRegistrujPrometAktivnost()
         {
+            //Adna Husičić
             Prodavač prodavac1 = new Prodavač("prodavac", "000", DateTime.Parse("01/07/2021"), 0);
             Prodavač prodavac2 = new Prodavač("prodavac", "001", DateTime.Parse("01/07/2021"), 0);
             Assert.IsTrue(prodavac1.Aktivnost);
@@ -89,11 +169,29 @@ namespace TestProjectG3
         }
     }
 
+    #endregion
+
+    #region Testovi za klasu Stand
+
+    [TestClass]
+    public class TestClassStand
+    {
+
+    }
+
+    #endregion
+
+    #region Testovi za klasu Proizvod
+
     [TestClass]
     public class TestClassProizvod
     {
 
     }
+
+    #endregion
+
+    #region Testovi za klasu Kupovina
 
     [TestClass]
     public class TestClassKupovina
@@ -101,9 +199,7 @@ namespace TestProjectG3
 
     }
 
-    [TestClass]
-    public class TestClassStand
-    {
+    #endregion
 
-    }
+
 }
