@@ -641,7 +641,16 @@ namespace TestProjectG3
             paradajz.Certifikat387 = true;
         }
 
+        [TestMethod]
+        public void TestGenerisanjeSifreDomaciIStrani()
+        {
+                //Mirza Kadrić
+            Proizvod p = new Proizvod(Namirnica.Povrće, "Luk", 20, DateTime.Now, 1.5, true);
+            StringAssert.StartsWith(p.ŠifraProizvoda, "387");
 
+            p = new Proizvod(Namirnica.Voće, "Jagoda", 30, DateTime.Now, 2, false);
+            StringAssert.StartsWith(p.ŠifraProizvoda, "111");
+        }
 
     }
 
