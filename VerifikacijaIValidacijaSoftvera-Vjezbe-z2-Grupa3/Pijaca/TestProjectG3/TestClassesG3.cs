@@ -484,15 +484,16 @@ namespace TestProjectG3
         [TestMethod]
         public void TestRegistrujPrometAktivnost()
         {
+            //Adna Husičić
             Prodavač prodavac1 = new Prodavač("prodavac", "000", DateTime.Parse("01/07/2021"), 0);
             Prodavač prodavac2 = new Prodavač("prodavac", "001", DateTime.Parse("01/07/2021"), 0);
             Assert.IsTrue(prodavac1.Aktivnost);
 
-               prodavac1.RegistrujPromet("000", 0, DateTime.Parse("01/07/2021"), DateTime.Parse("01/09/2021"));
-               prodavac2.RegistrujPromet("001", 1000, DateTime.Parse("01/07/2021"), DateTime.Parse("10/07/2021"));
-               Assert.IsFalse(prodavac1.Aktivnost);
-               Assert.IsTrue(prodavac2.Aktivnost);
-               Assert.AreEqual(prodavac2.UkupniPromet, 1000);
+            prodavac1.RegistrujPromet("000", 0, DateTime.Parse("01/07/2021"), DateTime.Parse("01/09/2021"));
+            prodavac2.RegistrujPromet("001", 1000, DateTime.Parse("01/07/2021"), DateTime.Parse("10/07/2021"));
+            Assert.IsFalse(prodavac1.Aktivnost);
+            Assert.IsTrue(prodavac2.Aktivnost);
+            Assert.AreEqual(prodavac2.UkupniPromet, 1000);
 
            }
     }
