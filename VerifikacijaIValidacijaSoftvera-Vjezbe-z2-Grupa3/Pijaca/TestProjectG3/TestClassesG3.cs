@@ -292,7 +292,7 @@ namespace TestProjectG3
             Assert.AreEqual(trznica.Štandovi[0].Proizvodi[1].OčekivanaKoličina, 1);
         }
 
-      /*  [TestMethod]
+        [TestMethod]
         public void IzvršiInspekciju1()
         {
             Tržnica trznica = new Tržnica();
@@ -342,7 +342,7 @@ namespace TestProjectG3
             Assert.AreEqual(trznica.Prodavači.Count, 0);
 
 
-        }*/
+        }
 
 
 

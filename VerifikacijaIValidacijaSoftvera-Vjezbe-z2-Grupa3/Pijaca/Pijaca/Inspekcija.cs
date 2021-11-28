@@ -15,7 +15,7 @@ namespace Pijaca
     {
         public bool ŠtandIspravan(Štand š)
         {
-            throw new NotImplementedException();
+            return (š.Prodavač.Ime.Length < 6);
         }
     }
 
