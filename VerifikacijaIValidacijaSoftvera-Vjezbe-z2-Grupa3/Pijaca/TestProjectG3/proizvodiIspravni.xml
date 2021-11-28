@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Proizvodi>
+	<Proizvod>
+		<Ime>Jabuka</Ime>
+		<Kolicina>15</Kolicina>
+		<Datum>01/10/2021</Datum>
+		<Cijena>2</Cijena>
+		<Domaci>true</Domaci>
+	</Proizvod>
+	<Proizvod>
+		<Ime>Jabuka</Ime>
+		<Kolicina>15</Kolicina>
+		<Datum>01/10/2021</Datum>
+		<Cijena>2</Cijena>
+		<Domaci>false</Domaci>
+	</Proizvod>
+</Proizvodi>

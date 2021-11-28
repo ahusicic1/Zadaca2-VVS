@@ -17,6 +17,337 @@ namespace TestProjectG3
     {
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void TestRadSaProdavačimaProdavačNull()
+        {
+            Tržnica trznica = new Tržnica();
+            trznica.RadSaProdavačima(null, "Dodavanje");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestRadSaProdavačimaDodavanjePostojećeg()
+        {
+            Tržnica trznica = new Tržnica();
+            Prodavač prodavac1 = new Prodavač("Prodavač", "1234", new DateTime(2021, 1, 31), 0);
+           
+            trznica.RadSaProdavačima(prodavac1, "Dodavanje");
+            trznica.RadSaProdavačima(prodavac1, "Dodavanje");
+        }
+
+        [TestMethod]
+        public void TestRadSaProdavačima()
+        {
+            Tržnica trznica = new Tržnica();
+            Prodavač prodavac1 = new Prodavač("Prodavač", "1234", new DateTime(2021, 1, 31), 0);
+
+            Assert.AreEqual(trznica.Prodavači.Count, 0);
+            trznica.RadSaProdavačima(prodavac1, "Dodavanje");
+            Assert.AreEqual(trznica.Prodavači.Count, 1);
+
+            prodavac1.Ime = "Neko";
+            trznica.RadSaProdavačima(prodavac1, "Izmjena");
+            Assert.AreNotEqual(trznica.Prodavači[0].Ime, "Prodavač");
+            StringAssert.Contains(trznica.Prodavači[0].Ime, "Neko");
+
+            trznica.RadSaProdavačima(prodavac1, "Brisanje");
+            Assert.AreEqual(trznica.Prodavači.Count, 0);
+
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(FormatException))]
+        public void TestRadSaProdavačimaBrisanjeIzuzetak()
+        {
+            Tržnica trznica = new Tržnica();
+            Prodavač prodavac1 = new Prodavač("Prodavač", "1234", new DateTime(2021, 1, 31), 0);
+            trznica.RadSaProdavačima(prodavac1, "Brisanje");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(FormatException))]
+        public void TestRadSaProdavačimaIzmjenaIzuzetak()
+        {
+            Tržnica trznica = new Tržnica();
+            Prodavač prodavac1 = new Prodavač("Prodavač", "1234", new DateTime(2021, 1, 31), 0);
+            trznica.RadSaProdavačima(prodavac1, "Izmjena");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestRadSaProdavačimaNepoznataOpcija()
+        {
+            Tržnica trznica = new Tržnica();
+            Prodavač prodavac1 = new Prodavač("Prodavač", "1234", new DateTime(2021, 1, 31), 0);
+            trznica.RadSaProdavačima(prodavac1, "Test");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestOtvoriŠtandIzuzetak1()
+        {
+            Tržnica trznica = new Tržnica();
+            Prodavač prodavac1 = new Prodavač("Prodavač", "1234", new DateTime(2021, 1, 31), 0);
+            trznica.OtvoriŠtand(prodavac1, new List<Proizvod>(), new DateTime(2022, 12, 31));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(FormatException))]
+        public void TestOtvoriŠtandIzuzetak2()
+        {
+            Tržnica trznica = new Tržnica();
+            Prodavač prodavac1 = new Prodavač("Prodavač", "1234", new DateTime(2021, 1, 31), 0);
+            trznica.RadSaProdavačima(prodavac1, "Dodavanje");
+            Štand štand = new Štand(prodavac1, new DateTime(2022, 12, 31));
+            trznica.OtvoriŠtand(prodavac1, new List<Proizvod>(), new DateTime(2022, 12, 31));
+            trznica.OtvoriŠtand(prodavac1, new List<Proizvod>(), new DateTime(2022, 12, 31));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestIzvršavanjeKupovinaIzuzetak1()
+        {
+            Tržnica trznica = new Tržnica();
+            Prodavač prodavac1 = new Prodavač("Prodavač", "1234", new DateTime(2021, 1, 31), 0);
+            Štand štand = new Štand(prodavac1, new DateTime(2022, 12, 31));
+      
+            trznica.IzvršavanjeKupovina(štand, new List<Kupovina>(), "");
+        }
+
+        [TestMethod]
+        public void TestIzvršavanjeKupovina()
+        {
+            Tržnica trznica = new Tržnica();
+            Prodavač prodavac1 = new Prodavač("Prodavač", "1234", new DateTime(2021, 1, 31), 0);
+            Štand štand = new Štand(prodavac1, new DateTime(2022, 12, 31));
+        
+            Proizvod kupus = new Proizvod(Namirnica.Povrće, "kupus", 3, new DateTime(2021, 3, 31), 2, false);
+            Proizvod paradajz = new Proizvod(Namirnica.Povrće, "paradajz", 3, new DateTime(2021, 3, 31), 2, false);
+            Kupovina k1 = new Kupovina(kupus, 1);
+            Kupovina k2 = new Kupovina(paradajz, 2);
+
+            List<Kupovina> kupovine = new List<Kupovina>() {  k2 };
+            trznica.RadSaProdavačima(prodavac1, "Dodavanje");
+            trznica.OtvoriŠtand(prodavac1, new List<Proizvod>(), new DateTime(2022, 3, 31));
+            trznica.IzvršavanjeKupovina(štand, kupovine, "1234");
+            Assert.AreEqual(trznica.Prodavači[0].UkupniPromet, 4);
+
+            Kupovina k3 = new Kupovina(paradajz, 2);
+            kupovine.Add(k3);
+            kupovine.Add(k1);
+            trznica.IzvršavanjeKupovina(štand, kupovine, "1234");
+            Assert.AreEqual(trznica.Prodavači[0].UkupniPromet, 14);
+        }
+
+        [TestMethod]
+        public void TestDodajTipskeNamirnice()
+        {
+            Tržnica trznica = new Tržnica();
+            Prodavač prodavac1 = new Prodavač("ProdavačA", "1234", new DateTime(2021, 1, 31), 0);
+            Prodavač prodavac2 = new Prodavač("ProdavačB", "4567", new DateTime(2021, 1, 31), 0);
+            Prodavač prodavac3 = new Prodavač("ProdavačC", "6789", new DateTime(2021, 1, 31), 0);
+            Štand štand1 = new Štand(prodavac1, new DateTime(2022, 12, 31));
+            Štand štand2 = new Štand(prodavac2, new DateTime(2022, 12, 31));
+            Štand štand3 = new Štand(prodavac3, new DateTime(2022, 12, 31));
+
+            Proizvod kupus = new Proizvod(Namirnica.Povrće, "kupus", 3, new DateTime(2021, 3, 31), 2, false);
+            Proizvod paradajz = new Proizvod(Namirnica.Povrće, "paradajz", 3, new DateTime(2021, 3, 31), 2, false);
+            Proizvod jabuka = new Proizvod(Namirnica.Voće, "jabuka", 3, new DateTime(2021, 3, 31), 2, false);
+            Proizvod meso= new Proizvod(Namirnica.Meso, "meso", 3, new DateTime(2021, 3, 31), 2, false);
+            Proizvod zitarica = new Proizvod(Namirnica.Žitarica, "zitarica", 3, new DateTime(2021, 3, 31), 2, false);
+            Proizvod poluproizvod = new Proizvod(Namirnica.Poluproizvod, "poluproizvod", 3, new DateTime(2021, 3, 31), 2, false);
+            Proizvod ostalo = new Proizvod(Namirnica.Ostalo, "ostalo", 3, new DateTime(2021, 3, 31), 2, false);
+
+            trznica.RadSaProdavačima(prodavac1, "Dodavanje");
+            trznica.RadSaProdavačima(prodavac2, "Dodavanje");
+            trznica.RadSaProdavačima(prodavac3, "Dodavanje");
+            trznica.OtvoriŠtand(prodavac1, new List<Proizvod>() { meso, paradajz, jabuka}, new DateTime(2022, 3, 31));
+            trznica.OtvoriŠtand(prodavac2, new List<Proizvod>() { poluproizvod}, new DateTime(2022, 3, 31));
+            trznica.OtvoriŠtand(prodavac3, new List<Proizvod>() { kupus, jabuka}, new DateTime(2022, 3, 31));
+
+            List<Proizvod> proizvodi = new List<Proizvod>() { kupus, paradajz, jabuka, meso, zitarica, poluproizvod, ostalo };
+            trznica.DodajTipskeNamirnice(Namirnica.Meso, true);
+            Assert.IsTrue(trznica.Štandovi[0].Proizvodi.Find(p => p.VrstaNamirnice == Namirnica.Meso) != null);
+
+            trznica.DodajTipskeNamirnice(Namirnica.Voće, true);
+            Assert.IsTrue(trznica.Štandovi[0].Proizvodi.Find(p => p.Ime == "Šljiva") != null);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestDodajTipskeNamirniceIzuzetak1()
+        {
+            Tržnica trznica = new Tržnica();
+            trznica.DodajTipskeNamirnice(Namirnica.Ostalo, false);
+
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestDodajTipskeNamirniceIzuzetak2()
+        {
+            Tržnica trznica = new Tržnica();
+            Prodavač prodavac1 = new Prodavač("ProdavačA", "1234", new DateTime(2021, 1, 31), 0);
+            Štand štand1 = new Štand(prodavac1, new DateTime(2022, 12, 31));
+            Proizvod meso = new Proizvod(Namirnica.Meso, "meso", 3, new DateTime(2021, 3, 31), 2, false);
+            trznica.RadSaProdavačima(prodavac1, "Dodavanje");
+           
+            trznica.OtvoriŠtand(prodavac1, new List<Proizvod>() { meso}, new DateTime(2022, 3, 31));
+            trznica.DodajTipskeNamirnice(Namirnica.Meso, true);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestDodajTipskeNamirniceIzuzetak3()
+        {
+            Tržnica trznica = new Tržnica();
+            Prodavač prodavac1 = new Prodavač("ProdavačA", "1234", new DateTime(2021, 1, 31), 0);
+            Štand štand1 = new Štand(prodavac1, new DateTime(2022, 12, 31));
+            Proizvod jabuka = new Proizvod(Namirnica.Voće, "jabuka", 3, new DateTime(2021, 3, 31), 2, false);
+            trznica.RadSaProdavačima(prodavac1, "Dodavanje");
+
+            trznica.OtvoriŠtand(prodavac1, new List<Proizvod>() { jabuka }, new DateTime(2022, 3, 31));
+            trznica.DodajTipskeNamirnice(Namirnica.Voće, true);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestNaruciProizvodeIzuzetak1()
+        {
+            Tržnica trznica = new Tržnica();
+            Prodavač prodavac1 = new Prodavač("ProdavačA", "1234", new DateTime(2021, 1, 31), 0);
+            Štand štand1 = new Štand(prodavac1, new DateTime(2022, 12, 31));
+            Proizvod jabuka = new Proizvod(Namirnica.Voće, "jabuka", 3, new DateTime(2021, 3, 31), 2, false);
+            Proizvod zitarica = new Proizvod(Namirnica.Žitarica, "zitarica", 3, new DateTime(2021, 3, 31), 2, false);
+
+            trznica.NaručiProizvode(štand1, new List<Proizvod>() { jabuka, zitarica }, new List<int>() { 1 }, new List<DateTime>());
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestNaruciProizvodeIzuzetak2()
+        {
+            Tržnica trznica = new Tržnica();
+            Prodavač prodavac1 = new Prodavač("ProdavačA", "1234", new DateTime(2021, 1, 31), 0);
+            Štand štand1 = new Štand(prodavac1, new DateTime(2022, 12, 31));
+            Proizvod jabuka = new Proizvod(Namirnica.Voće, "jabuka", 3, new DateTime(2021, 3, 31), 2, false);
+            Proizvod zitarica = new Proizvod(Namirnica.Žitarica, "zitarica", 3, new DateTime(2021, 3, 31), 2, false);
+
+            trznica.NaručiProizvode(štand1, new List<Proizvod>() { jabuka, zitarica }, new List<int>() { 1 ,1}, new List<DateTime>());
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestNaruciProizvodeIzuzetak3()
+        {
+            Tržnica trznica = new Tržnica();
+            Prodavač prodavac1 = new Prodavač("ProdavačA", "1234", new DateTime(2021, 1, 31), 0);
+            Štand štand1 = new Štand(prodavac1, new DateTime(2022, 12, 31));
+            Proizvod jabuka = new Proizvod(Namirnica.Voće, "jabuka", 3, new DateTime(2021, 3, 31), 2, false);
+            Proizvod zitarica = new Proizvod(Namirnica.Žitarica, "zitarica", 3, new DateTime(2021, 3, 31), 2, false);
+
+            trznica.NaručiProizvode(štand1, new List<Proizvod>() { jabuka, zitarica }, new List<int>() { 1, 1 }, new List<DateTime>() { new DateTime(2021, 1, 31), new DateTime(2021, 1, 31) });
+       
+        }
+
+        [TestMethod]
+        public void TestNaruciProizvode1()
+        {
+            Tržnica trznica = new Tržnica();
+            Prodavač prodavac1 = new Prodavač("ProdavačA", "1234", new DateTime(2021, 1, 31), 0);
+            //Štand štand1 = new Štand(prodavac1, new DateTime(2022, 12, 31));
+            Proizvod jabuka = new Proizvod(Namirnica.Voće, "jabuka", 3, new DateTime(2021, 3, 31), 2, false);
+            Proizvod zitarica = new Proizvod(Namirnica.Žitarica, "zitarica", 3, new DateTime(2021, 3, 31), 2, false);
+            trznica.RadSaProdavačima(prodavac1, "Dodavanje");
+
+            trznica.OtvoriŠtand(prodavac1, new List<Proizvod>() { jabuka, zitarica }, new DateTime(2022, 3, 31));
+            trznica.NaručiProizvode(trznica.Štandovi[0], new List<Proizvod>() { jabuka, zitarica }, new List<int>() { 1, 1 }, new List<DateTime>() { DateTime.Now.AddDays(3), DateTime.Now.AddDays(3) });
+
+
+            Assert.AreEqual(trznica.Štandovi.Count, 1);
+            Assert.AreEqual(trznica.Štandovi[0].Proizvodi.Count, 2);
+            Assert.AreEqual(trznica.Štandovi[0].Proizvodi[0].OčekivanaKoličina, 1);
+            Assert.AreEqual(trznica.Štandovi[0].Proizvodi[0].DatumOčekivaneKoličine.Day, DateTime.Now.AddDays(3).Day);
+            Assert.AreEqual(trznica.Štandovi[0].Proizvodi[0].DatumOčekivaneKoličine.Month, DateTime.Now.AddDays(3).Month);
+            Assert.AreEqual(trznica.Štandovi[0].Proizvodi[0].DatumOčekivaneKoličine.Year, DateTime.Now.AddDays(3).Year);
+        }
+    
+
+        [TestMethod]
+        public void TestNaruciProizvode2()
+        {
+            Tržnica trznica = new Tržnica();
+            Prodavač prodavac1 = new Prodavač("ProdavačA", "1234", new DateTime(2021, 1, 31), 0);
+            //Štand štand1 = new Štand(prodavac1, new DateTime(2022, 12, 31));
+            Proizvod jabuka = new Proizvod(Namirnica.Voće, "jabuka", 3, new DateTime(2021, 3, 31), 2, false);
+            Proizvod zitarica = new Proizvod(Namirnica.Žitarica, "zitarica", 3, new DateTime(2021, 3, 31), 2, false);
+            trznica.RadSaProdavačima(prodavac1, "Dodavanje");
+
+            trznica.OtvoriŠtand(prodavac1, new List<Proizvod>() { jabuka, zitarica }, new DateTime(2022, 3, 31));
+            trznica.NaručiProizvode(trznica.Štandovi[0], new List<Proizvod>() { jabuka, zitarica }, new List<int>() { 1, 1 }, new List<DateTime>() { DateTime.Now.AddDays(3), DateTime.Now.AddDays(3) }, true);
+
+            Assert.AreEqual(trznica.Štandovi.Count, 1);
+            Assert.AreEqual(trznica.Štandovi[0].Proizvodi.Count, 2);
+            Assert.AreEqual(trznica.Štandovi[0].Proizvodi[0].OčekivanaKoličina, 1);
+            Assert.AreEqual(trznica.Štandovi[0].Proizvodi[1].OčekivanaKoličina, 1);
+        }
+
+      /*  [TestMethod]
+        public void IzvršiInspekciju1()
+        {
+            Tržnica trznica = new Tržnica();
+            Prodavač prodavac1 = new Prodavač("prodA", "1234", new DateTime(2021, 1, 31), 0);
+            List<Prodavač> prodavaciNeispravni = new List<Prodavač>();
+            for(int i=0; i<12; i++)
+            {
+                string naziv = "Prodavač" + i.ToString();
+                string broj = "1" + i.ToString();
+                prodavaciNeispravni.Add(new Prodavač(naziv, broj, new DateTime(2021, 1, 31), 0));
+            }
+
+            List<Štand> standovi = new List<Štand>();
+       
+
+            Štand štand1 = new Štand(prodavac1, new DateTime(2022, 12, 31));
+            Inspekcija inspekcija = new Inspekcija();
+
+            Proizvod kupus = new Proizvod(Namirnica.Povrće, "kupus", 3, new DateTime(2021, 3, 31), 2, false);
+            Proizvod paradajz = new Proizvod(Namirnica.Povrće, "paradajz", 3, new DateTime(2021, 3, 31), 2, false);
+            Proizvod jabuka = new Proizvod(Namirnica.Voće, "jabuka", 3, new DateTime(2021, 3, 31), 2, false);
+            Proizvod meso = new Proizvod(Namirnica.Meso, "meso", 3, new DateTime(2021, 3, 31), 2, false);
+            Proizvod zitarica = new Proizvod(Namirnica.Žitarica, "zitarica", 3, new DateTime(2021, 3, 31), 2, false);
+            Proizvod poluproizvod = new Proizvod(Namirnica.Poluproizvod, "poluproizvod", 3, new DateTime(2021, 3, 31), 2, false);
+            Proizvod ostalo = new Proizvod(Namirnica.Ostalo, "ostalo", 3, new DateTime(2021, 3, 31), 2, false);
+
+            trznica.RadSaProdavačima(prodavac1, "Dodavanje");
+       
+            trznica.OtvoriŠtand(prodavac1, new List<Proizvod>() { meso, paradajz, jabuka }, new DateTime(2022, 3, 31));
+  
+
+            Kupovina k2 = new Kupovina(paradajz, 2);
+
+            List<Kupovina> kupovine = new List<Kupovina>() { k2 };
+            trznica.IzvršavanjeKupovina(trznica.Štandovi[0], kupovine, "1234");
+            
+            Assert.IsFalse(trznica.Štandovi.Count== 0);
+            Assert.IsFalse(trznica.Prodavači.Count==0);
+            for (int i = 1; i < 12; i++)
+            {
+                 trznica.RadSaProdavačima(prodavaciNeispravni[i], "Dodavanje");
+                trznica.OtvoriŠtand(prodavaciNeispravni[i], new List<Proizvod>() { meso, paradajz, jabuka }, new DateTime(2022, 3, 31));
+            }
+            trznica.IzvršiInspekciju(inspekcija);
+            Assert.IsTrue(trznica.UkupniPrometPijace == 0);
+            Assert.AreEqual(trznica.Štandovi.Count, 0);
+            Assert.AreEqual(trznica.Prodavači.Count, 0);
+
+
+        }*/
+
+
+
+
+            [TestMethod]
         public void TestZatvoriSveNeaktivneStandove()
         {
             //Dinija Seferovic
@@ -196,6 +527,121 @@ namespace TestProjectG3
     [TestClass]
     public class TestClassProizvod
     {
+        static IEnumerable<object[]> ProizvodiNeispravniCSV
+        {
+            get
+            {
+                return UcitajProizvodeCSV();
+            }
+        }
+
+        static IEnumerable<object[]> ProizvodiIspravniXML
+        {
+            get
+            {
+                return UcitajProizvodeXML();
+            }
+        }
+
+        [TestMethod]
+        [DynamicData("ProizvodiNeispravniCSV")]
+        [ExpectedException(typeof(FormatException))]
+        public void TestKonstruktoraProizvodCSV(string ime, int kolicina, DateTime datum, double cijena)
+        {
+            Proizvod proizvod = new Proizvod(Namirnica.Voće, ime, kolicina, datum, cijena, true);
+        }
+
+        [TestMethod]
+        [DynamicData("ProizvodiIspravniXML")]
+        public void TestKonstruktoraProizvodXML(string ime, int kolicina, DateTime datum, double cijena, bool domaci)
+        {
+            Proizvod proizvod = new Proizvod(Namirnica.Povrće, ime, kolicina, datum, cijena, domaci);
+            Assert.AreEqual(proizvod.CijenaProizvoda, cijena);
+            Assert.AreEqual(proizvod.KoličinaNaStanju, kolicina);
+            Assert.AreEqual(proizvod.Certifikat387, domaci);
+            StringAssert.StartsWith(proizvod.Ime, ime);
+            StringAssert.EndsWith(proizvod.Ime, ime);
+        }
+
+        public static IEnumerable<object[]> UcitajProizvodeCSV()
+        {
+            using (var reader = new StreamReader("proizvodiNeispravni.csv"))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            {
+                var rows = csv.GetRecords<dynamic>();
+                foreach (var row in rows)
+                {
+                    var values = ((IDictionary<String, Object>)row).Values;
+                    var elements = values.Select(elem => elem.ToString()).ToList();
+                    yield return new object[] { elements[0], Convert.ToInt32(elements[1]), DateTime.Parse(elements[2]), Convert.ToDouble(elements[3]) };
+                }
+            }
+        }
+
+        public static IEnumerable<object[]> UcitajProizvodeXML()
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.Load("proizvodiIspravni.xml");
+            foreach (XmlNode node in doc.DocumentElement.ChildNodes)
+            {
+                List<string> elements = new List<string>();
+                foreach (XmlNode innerNode in node)
+                {
+                    elements.Add(innerNode.InnerText);
+                }
+                yield return new object[] { elements[0], Convert.ToInt32(elements[1]), DateTime.Parse(elements[2]), Convert.ToDouble(elements[3]), Convert.ToBoolean(elements[4]) };
+            }
+        }
+
+
+        [TestMethod]
+        [ExpectedException(typeof(FormatException))]
+        public void TestDatumOcekivaneKolicineIzuzetak()
+        {
+            Proizvod paradajz = new Proizvod(Namirnica.Povrće, "paradajz", 3, new DateTime(2021, 3, 31), 2, false);
+            paradajz.NaručiKoličinu(10, new DateTime(2021, 1, 1));
+        }
+
+
+        [TestMethod]
+        [ExpectedException(typeof(FormatException))]
+        public void TestOcekivanaKolicinaIzuzetak1()
+        {
+            Proizvod paradajz = new Proizvod(Namirnica.Povrće, "paradajz", 3, new DateTime(2021, 3, 31), 2, false);
+            paradajz.NaručiKoličinu(-5, DateTime.Now.AddMonths(3));
+        }
+        [TestMethod]
+        [ExpectedException(typeof(FormatException))]
+        public void TestOcekivanaKolicinaIzuzetak2()
+        {
+            Proizvod paradajz = new Proizvod(Namirnica.Povrće, "paradajz", 3, new DateTime(2021, 3, 31), 2, false);
+            paradajz.NaručiKoličinu(15, DateTime.Now.AddMonths(3));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(FormatException))]
+        public void TestCertifikatIzuzetak1()
+        {
+            Proizvod paradajz = new Proizvod(Namirnica.Povrće, "paradajz", 3, new DateTime(2021, 3, 31), 2, true);
+            paradajz.Certifikat387 = false;
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(FormatException))]
+        public void TestCertifikatIzuzetak2()
+        {
+            Proizvod paradajz = new Proizvod(Namirnica.Povrće, "paradajz", 3, new DateTime(2021, 3, 31), 2, false);
+            paradajz.Certifikat387 = true;
+        }
+
+        [TestMethod]
+        public void TestCertifikat()
+        {
+            Proizvod paradajz = new Proizvod(Namirnica.Povrće, "paradajz", 3, new DateTime(2021, 3, 31), 2, true);
+            paradajz.Certifikat387 = true;
+        }
+
+
 
     }
 
